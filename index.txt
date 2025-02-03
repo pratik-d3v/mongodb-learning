@@ -1,1 +1,272 @@
 //Introduction to mongodb
+Mongodb is non-relational database.
+
+
+#creating database
+DB_NAME=mongo-learning
+
+#creating collection
+collection = db["mongo_test"]
+
+
+
+##Following is basic crud operations in mongodb using python
+
+
+##create a dunction called create_document with data name, is_active, and age and insert
+def create_document():
+    document = {"name" : "Pratik Kadam", "is_active" : True, "age" : 24}
+    collection.insert_one(document)
+    print("Document Inserted" , collection)
+
+#call the function
+create_document()
+
+#created document in database
+{
+  "_id": {
+    "$oid": "67a0414fea22b4770c8e460c"
+  },
+  "name": "Pratik Kadam",
+  "is_active": true,
+  "age": 24
+}
+
+#Methods
+
+There are 2 methods to insert documents into a MongoDB database.
+
+insertOne()
+This method inserts a single object into the database.
+
+insertMany()
+This method inserts an array of objects into the database.
+
+def insert_many_documents():
+    documents = [
+        {"name": "Alice", "is_active": True, "age": 28},
+        {"name": "Bob", "is_active": False, "age": 30},
+        {"name": "Charlie", "is_active": True, "age": 22},
+    ]
+    collection.insert_many(documents)
+    print("Multiple Documents Inserted")
+
+insert_many_documents()
+
+##Documents Found
+[
+    {'name': 'Alice', 'is_active': True, 'age': 28, '_id': ObjectId('67a0cce639893ea7f113c790')},
+    {'name': 'Bob', 'is_active': False, 'age': 30, '_id': ObjectId('67a0cce639893ea7f113c791')},
+    {'name': 'Charlie', 'is_active': True, 'age': 22, '_id': ObjectId('67a0cce639893ea7f113c792')}
+]
+
+------------------
+
+##Find the document
+def find_document():
+    output = collection.find_one({"name" : "Pratik Kadam"})
+    print("Document Found : ", output)
+
+#Document Found
+{'_id': ObjectId('67a0414fea22b4770c8e460c'), 'name': 'Pratik Kadam', 'is_active': True, 'age': 24}
+
+##Methods
+Find()
+This method accepts a query object. If left empty, all documents will be returned.
+
+
+Find_One()
+This method accepts a query object. If left empty, it will return the first document it finds.
+
+Projection
+This parameter is an object that describes which fields to include in the results.
+use 1 to include and 0 to exclude while filtering any data
+
+def projection_example():
+    # Only select 'name' and 'age' fields for the document
+    projection = {"name": 1, "age": 1, "_id": 0}  # "_id": 0 excludes the _id field
+    result = collection.find_one({"name": "Pratik Kadam"}, projection)
+    print("Projection Result:", result)
+
+
+##Projection Result
+{'name': 'Pratik Kadam', 'age': 24} 
+
+-------------------
+
+##Update the document
+def update_document():
+    collection.update_one({"name" : "Pratik Kadam"}, {"$set" : {"age" : 30}})
+    print("Document Updated")
+
+##Updated Document
+{
+  "_id": {
+    "$oid": "67a0414fea22b4770c8e460c"
+  },
+  "name": "Pratik Kadam",
+  "is_active": true,
+  "age": 30
+}
+
+
+##Update_One() 
+The updateOne() method will update the first document that is found matching the provided query.
+
+##Update_Many()
+The updateMany() method will update all documents that match the provided query.
+-------------------
+
+##Delete document
+def delete_document():
+    collection.delete_one({"name" : "Pratik Kadam"})
+    print("Document Deleted")
+
+delete_document()
+#document Deleted
+
+##Delete_One()
+The deleteOne() method will delete the first document that matches the query provided.
+
+##Delete_many()
+The deleteMany() method will delete all documents that match the query provided.
+
+-------------------
+
+Comparison operators
+
+1] $eq: Values are equal
+2] $ne: Values are not equal
+3] $gt: Value is greater than another value
+4] $gte: Value is greater than or equal to another value
+5] $lt: Value is less than another value
+5] $lte: Value is less than or equal to another value
+6] $in: Value is matched within an array
+
+1] $eq: Matches documents where the field value is equal to the specified value.
+Example: {"age": {"$eq": 28}} — finds documents where age is 28.
+
+2] $ne: Matches documents where the field value is not equal to the specified value.
+Example: {"age": {"$ne": 30}} — finds documents where age is not 30.
+
+3] $gt: Matches documents where the field value is greater than the specified value.
+Example: {"age": {"$gt": 25}} — finds documents where age is greater than 25.
+
+4] $gte: Matches documents where the field value is greater than or equal to the specified value.
+Example: {"age": {"$gte": 28}} — finds documents where age is greater than or equal to 28.
+
+5] $lt: Matches documents where the field value is less than the specified value.
+Example: {"age": {"$lt": 30}} — finds documents where age is less than 30.
+
+6] $lte: Matches documents where the field value is less than or equal to the specified value.
+Example: {"age": {"$lte": 28}} — finds documents where age is less than or equal to 28.
+
+7] $in: Matches documents where the field value is in the specified array of values.
+Example: {"age": {"$in": [22, 30]}} — finds documents where age is either 22 or 30.
+
+Logical Operators
+
+1] $and: Returns documents where both queries match
+2] $or: Returns documents where either query matches
+3] $nor: Returns documents where both queries fail to match
+4] $not: Returns documents where the query does not match
+
+$and: Returns documents where both queries match.
+Example: {"$and": [{"age": {"$gte": 25}}, {"is_active": True}]}
+This will match documents where age is greater than or equal to 25 and is_active is true.
+
+$or: Returns documents where either of the queries matches.
+Example: {"$or": [{"age": {"$gte": 25}}, {"is_active": False}]}
+This will match documents where age is greater than or equal to 25 or is_active is false.
+
+$nor: Returns documents where both queries fail to match.
+Example: {"$nor": [{"age": {"$lt": 25}}, {"is_active": False}]}
+This will match documents where age is not less than 25 and is_active is not false.
+
+$not: Returns documents where the query does not match.
+Example: {"age": {"$not": {"$gte": 28}}}
+This will match documents where age is not greater than or equal to 28.
+
+Evaluation
+$regex: Allows the use of regular expressions when evaluating field values
+$text: Performs a text search
+$where: Uses a JavaScript expression to match documents.
+
+------------------------
+
+Fields
+1] $currentDate: Sets the field value to the current date
+2] $inc: Increments the field value
+3] $rename: Renames the field
+4] $set: Sets the value of a field
+5] $unset: Removes the field from the document
+
+Array
+1] $addToSet: Adds distinct elements to an array
+2] $pop: Removes the first or last element of an array
+3] $pull: Removes all elements from an array that match the query
+4] $push: Adds an element to an array
+
+-------------------------
+
+Aggregation Pipeline
+Aggregation pipelines can have one or more "stages". The order of these stages are important.
+Each stage acts upon the results of the previous stage.
+
+##Aggregation
+def aggregation_example():
+    pipeline = [
+        {"$match": {"is_active": True}},  # Filter active users
+        {"$group": {"_id": "$age", "count": {"$sum": 1}}},  # Group by age and count users
+        {"$sort": {"count": -1}}  # Sort by count in descending order
+    ]
+    result = collection.aggregate(pipeline)
+    for doc in result:
+        print("Aggregation Result:", doc)
+
+##Aggregation Result
+Aggregation Result: {'_id': 28, 'count': 3}
+Aggregation Result: {'_id': 22, 'count': 3}
+Aggregation Result: {'_id': 24, 'count': 2}
+
+#Examples of Aggregation Methods
+1] $group : This aggregation stage groups documents by the unique _id expression provided.
+2] $limit : This aggregation stage limits the number of documents passed to the next stage.
+3] $project : This aggregation stage passes only the specified fields along to the next aggregation stage.
+4] $sort : This aggregation stage groups sorts all documents in the specified sort order.
+5] $match : This aggregation stage behaves like a find. It will filter documents that match the query provided.
+6] $addFields: This aggregation stage adds new fields to documents.
+7] $count : This aggregation stage counts the total amount of documents passed from the previous stage.
+8] $lookup : This aggregation stage performs a left outer join to a collection in the same database.
+9] $out : This aggregation stage performs a left outer join to a collection in the same database.
+
+-----------------------
+
+Indexing
+create_index([("name", 1)]): Creates an index on the name field in ascending order (1 for ascending, -1 for descending).
+Indexes improve query performance, especially on fields frequently used for search.
+
+# Indexing Example
+def indexing_example():
+    # Create an index on the 'name' field
+    collection.create_index([("name", 1)])  # 1 for ascending order
+
+    print("Index on 'name' field created.")
+
+    #above line allow us to search faster because of indexing
+    result = collection.find({"name": "Alice"})
+    for doc in result:
+        print("Found with index:", doc)
+
+# indexing_example()
+
+##Data found
+Index on 'name' field created.
+Found with index: {'_id': ObjectId('67a0cc3f0158e9356574d4e5'), 'name': 'Alice', 'is_active': True, 'age': 28}
+Found with index: {'_id': ObjectId('67a0cce639893ea7f113c790'), 'name': 'Alice', 'is_active': True, 'age': 28}
+Found with index: {'_id': ObjectId('67a0d02c9675bfc611daa90f'), 'name': 'Alice', 'is_active': True, 'age': 28}
+
+------------------------
+
+##Schema Validations
+We can add Validations on schema that we write.
